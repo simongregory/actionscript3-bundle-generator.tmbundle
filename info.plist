@@ -4,6 +4,15 @@
 <dict>
 	<key>name</key>
 	<string>ActionScript 3 Bundle Generator</string>
+	<key>ordering</key>
+	<array>
+		<string>24F15F89-6B68-44A5-A6E3-59DDC723FEF0</string>
+		<string>2073C5D0-4A9C-4F7A-A82B-DE0DF756A196</string>
+		<string>ECD06062-FC8A-413B-BD5D-82E5FAEFC1FE</string>
+		<string>2D787B1E-7516-4004-A0BA-0FE7335CEB6F</string>
+		<string>A29ECF9D-36F1-4001-B458-4944C58A2FD2</string>
+		<string>D3B3817C-1B5B-45F3-BA5F-9E9481BEA1FC</string>
+	</array>
 	<key>uuid</key>
 	<string>E585B311-17DE-4F1C-8A1F-A2991FF641C7</string>
 </dict>

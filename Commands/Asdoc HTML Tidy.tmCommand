@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby -wKU
+
+require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
+
+out = `tidy -f /tmp/tm_tidy_errors -iq -utf8 \
+          -wrap 0 --tab-size 4 --indent-spaces 4 \
+          --indent yes \
+          -asxhtml --output-xhtml yes \
+          --show-body-only no \
+          --enclose-text yes \
+          --doctype strict \
+		 --vertical-space yes \
+		 --indent-attributes yes \
+          --tidy-mark no`
+
+print out</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>@r</string>
+	<key>name</key>
+	<string>Asdoc HTML Tidy</string>
+	<key>output</key>
+	<string>replaceDocument</string>
+	<key>scope</key>
+	<string>text.html</string>
+	<key>uuid</key>
+	<string>24F15F89-6B68-44A5-A6E3-59DDC723FEF0</string>
+</dict>
+</plist>
