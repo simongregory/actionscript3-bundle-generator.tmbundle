@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>. "$TM_SUPPORT_PATH/lib/webpreview.sh"
+html_header "ActionScript Framework Bundle Help" "Framework"
+
+"$TM_SUPPORT_PATH/lib/markdown_to_help.rb" &lt;&lt;'EOF'
+# Overview
+
+Some useful links:
+
+[http://www.framework.org][2]
+
+# Installation
+
+[Download Framework][1] then unzip and move the resulting directory to a suitable location on your machine. Then let TextMate know where to find it by setting the [environmental variable](?environment_variables) `TM_FRAMEWORK_HOME` to point to it.
+
+# Configuration Options
+
+These environment variables allow you to define or customise the behavior of certain commands. For help on setting them up please see [TextMate help](?environment_variables).
+
+* `TM_FRAMEWORK_HOME`  
+The path to the Framework release on your machine.
+
+[1]: http://www.framework.org/
+[2]: http://blog.framework.org/
+
+EOF
+
+html_footer
+</string>
+	<key>input</key>
+	<string>none</string>
+	<key>name</key>
+	<string>Help</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>scope</key>
+	<string>source.actionscript.3.papervision3d</string>
+	<key>uuid</key>
+	<string>SUBSTITUTE_UUID_HERE</string>
+</dict>
+</plist>
