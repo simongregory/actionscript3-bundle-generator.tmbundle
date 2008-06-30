@@ -17,6 +17,7 @@ class AsdocFrameworkParser
         @class_path_list = []
         @doc_path_list = []
         @framework_name = "unknown"
+        @package_filter = /^flash\/utils\//
     end
     
     public
@@ -41,15 +42,25 @@ class AsdocFrameworkParser
 
         # TODO: Class path level filtering.
         class_doc.elements.each( LINK_X_PATH ) do |tag|
-            @class_path_list.push( @base_uri+"/"+tag.attributes['href'].to_s )
-            @doc_path_list.push( tag.to_s.gsub( /\<\/?i\>/, '' ) )
+            class_href = tag.attributes['href'].to_s
+            if class_href =~ @package_filter
+                @class_path_list.push( @base_uri+"/"+class_href )
+                @doc_path_list.push( tag.to_s.gsub( /\<\/?i\>/, '' ) )
+                print "Adding Class " + File.basename( class_href ) + "<br>"
+            end
         end
 
-        class_doc.elements.each( NAME_X_PATH ) do |tag|
-            title_match = /All Classes \- (\w+) API Documentation/            
-            @framework_name = title_match.match( tag[0].to_s )[1].downcase
+        class_doc.elements.each( NAME_X_PATH ) do |tag|            
+            begin
+                # All Classes - ActionScript 3.0 Language and Components Reference
+                # All Classes \- \b(\w+)\b API Documentation
+                title_match = /All Classes \- \b(\w+)\b/            
+                @framework_name = title_match.match( tag[0].to_s )[1].downcase                
+            rescue Exception => e
+                puts e.to_s
+            end
         end
-        
+                
     end
     
     # Generates an asdoc dictionary list file this can be used

@@ -1,8 +1,14 @@
 #!/usr/bin/env ruby -wKU
 
 require ENV['TM_SUPPORT_PATH']+'/lib/exit_codes'
+require ENV['TM_SUPPORT_PATH']+'/lib/web_preview'
 require ENV['TM_BUNDLE_SUPPORT']+'/lib/asdoc_class_parser'
 require ENV['TM_BUNDLE_SUPPORT']+'/lib/asdoc_framework_parser'
+
+STDOUT.sync = true;
+
+html_header "ActionScript 3 Framework Language Generator"
+puts "<h1>Starting parse</h1><pre>"
 
 HTML_PATH = ENV['TM_SELECTED_FILE']
 
@@ -17,4 +23,12 @@ cp = AsdocClassParser.new
 cp.framework = fp.framework_name
 cp.load_classes fp.class_path_list
 
+puts "</pre><br/><br/><pre>"
+
 print cp.framework_language
+
+puts "</pre>"
+
+html_footer
+
+# log

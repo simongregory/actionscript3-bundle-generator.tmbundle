@@ -26,7 +26,7 @@ module AsdocTidy
           # that's injected by tidy as REXML has a bug in it 
           # and our XPath expressions fail (Ruby 1.8.6)
           def clean_for_rexml(path)
-               result = clean(path).sub( 'xmlns="http://www.w3.org/1999/xhtml"', '' )
+              result = clean(path).sub( 'xmlns="http://www.w3.org/1999/xhtml"', '' )
           end
     end
 end
