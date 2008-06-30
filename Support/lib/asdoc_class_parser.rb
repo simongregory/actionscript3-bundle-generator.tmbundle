@@ -164,11 +164,9 @@ class AsdocClassParser
             
             lang += "\t{\n"
             lang += "\t\tname = '#{key}.#{@framework}';\n"
-            lang += "\t\tmatch = '\\b("
-            print value.join('\n')
-            lang += ListToRegexp.process_list(value)
-            lang += value.sort.uniq.join("|")
-            lang += ")\\b';\n"
+            lang += "\t\tmatch = '\\b"
+            lang += ListToRegexp.process_list(value.sort.uniq)
+            lang += "\\b';\n"
             lang += "\t},\n"
         
         end

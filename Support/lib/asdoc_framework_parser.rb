@@ -17,7 +17,7 @@ class AsdocFrameworkParser
         @class_path_list = []
         @doc_path_list = []
         @framework_name = "unknown"
-        @package_filter = /^flash\/utils\//
+        @package_filter = /^mx\//
     end
     
     public
@@ -72,7 +72,8 @@ class AsdocFrameworkParser
         xml =  '<?xml version="1.0" encoding="UTF-8"?>'
         xml += "\n<dict>\n"
 
-        #TODO: Refactor to use single path array by reconstructing original path here.
+        #TODO: Refactor to use single path array by reconstructing original 
+		#path here.
         @doc_path_list.each do |tag|
             xml += "\t"+tag+"\n"
         end
