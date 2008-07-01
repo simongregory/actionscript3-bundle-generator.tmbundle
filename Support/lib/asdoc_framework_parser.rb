@@ -17,7 +17,8 @@ class AsdocFrameworkParser
         @class_path_list = []
         @doc_path_list = []
         @framework_name = "unknown"
-        @package_filter = /^mx\//
+        @package_filter = /^/
+		@logging_enabled = false
     end
     
     public
@@ -27,6 +28,14 @@ class AsdocFrameworkParser
     def class_path_list
         @class_path_list
     end
+
+	def package_filter=(rg)
+		@package_filter = rg
+	end
+	
+	def logging_enabled=(boo)
+		@logging_enabled = boo
+	end
     
     # Commands
     
@@ -46,7 +55,7 @@ class AsdocFrameworkParser
             if class_href =~ @package_filter
                 @class_path_list.push( @base_uri+"/"+class_href )
                 @doc_path_list.push( tag.to_s.gsub( /\<\/?i\>/, '' ) )
-                print "Adding Class " + File.basename( class_href ) + "<br>"
+                log( "Adding Class " + File.basename( class_href ) )
             end
         end
 
@@ -86,5 +95,12 @@ class AsdocFrameworkParser
     def framework_name
         @framework_name
     end
+	
+	# Log output.
+	def log( message )
+		if @logging_enabled
+			print message + "<br/>"
+		end
+	end
 
 end

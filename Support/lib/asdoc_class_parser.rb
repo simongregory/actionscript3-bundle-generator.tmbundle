@@ -35,6 +35,8 @@ class AsdocClassParser
         @constant_names = []
         @property_names = []
         @protected_properties = []
+
+		@logging_enabled = false
         
     end
     
@@ -96,6 +98,10 @@ class AsdocClassParser
     def framework=(fw)
         @framework = fw
     end
+
+	def logging_enabled=(boo)
+		@logging_enabled = boo
+	end
     
     # Input Commands
     
@@ -114,7 +120,7 @@ class AsdocClassParser
         class_html   = REXML::Document.new cleaned_html
         
         class_name = File.basename( file_path, ".html" )
-        print "Adding #{class_name}..<br>"
+        log( "Adding #{class_name}.." )
         
         @class_names.push(class_name)
         add_as_element(class_html,METHOD,@method_names)
@@ -201,5 +207,30 @@ class AsdocClassParser
         comps += ");\n};\nuuid = '" + `uuidgen`.chomp + "'; };\n}"
         
     end
+	
+	# Returns a list of accumulated method names.
+	def method_names
+		return if @method_names.empty?        
+        @method_names.uniq.sort        
+	end
+	
+	# Returns a list of accumulated constant names.
+	def constant_names
+		return if @constant_names.empty?        
+        @constant_names.uniq.sort
+	end
+	
+	# Returns a list of accumulated constant names.
+	def property_names
+		return if @property_names.empty?        
+        @property_names.uniq.sort
+	end
+	
+	# Log output.
+	def log( message )
+		if @logging_enabled
+			print message + "<br/>"
+		end
+	end
     
 end

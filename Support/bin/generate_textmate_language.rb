@@ -15,11 +15,13 @@ HTML_PATH = ENV['TM_SELECTED_FILE']
 TextMate.exit_show_tool_tip( "Please Select a File to Parse" ) if HTML_PATH == nil
 
 fp = AsdocFrameworkParser.new
+fp.logging_enabled = true
 fp.load_framework HTML_PATH
 
 TextMate.exit_show_tool_tip( "No Class files found to parse." ) if fp.class_path_list.empty?
 
 cp = AsdocClassParser.new
+cp.logging_enabled = true
 cp.framework = fp.framework_name
 cp.load_classes fp.class_path_list
 
