@@ -30,7 +30,9 @@ def print_to_file( path, content )
 	end
 end
 
-path = '/Users/simon/Desktop/'
+path = '/Users/simon/Desktop/ActionScript3'
+Dir.mkdir(path)
+
 print_to_file( path+"constant_names.txt", cp.constant_names )
 print_to_file( path+"method_names.txt", cp.method_names )
 print_to_file( path+"property_names.txt", cp.property_names )
