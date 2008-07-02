@@ -16,7 +16,7 @@ TextMate.exit_show_tool_tip( "No Class files found to parse." ) if fp.class_path
 
 # Utility Methods.
 
-def create_from_template template, new_file
+def create_from_template( template, new_file )
     
     template.each do |line|
         if line =~ /SUBSTITUTE_UUID_HERE/
@@ -28,7 +28,7 @@ def create_from_template template, new_file
     
 end
 
-def make_info name
+def make_info( name )
     info =  '<?xml version="1.0" encoding="UTF-8"?>'+"\n"
     info += '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">'+"\n"
     info += '<plist version="1.0">'+"\n"
@@ -81,9 +81,9 @@ new_auto_complete_method = File.new( NEW_BUNDLE+"/Commands/Auto Complete Functio
 new_auto_complete_import = File.new( NEW_BUNDLE+"/Commands/Auto Complete Import.tmCommand", "w" )
 new_help                 = File.new( NEW_BUNDLE+"/Commands/Help.tmCommand", "w" )
 
-create_from_template auto_complete_method_template, new_auto_complete_method
-create_from_template auto_complete_import_template, new_auto_complete_import
-create_from_template help_template, new_help
+create_from_template( auto_complete_method_template, new_auto_complete_method )
+create_from_template( auto_complete_import_template, new_auto_complete_import )
+create_from_template( help_template, new_help )
 
 lang_file.print cp.framework_language
 auto_completions_file.puts cp.auto_completions   

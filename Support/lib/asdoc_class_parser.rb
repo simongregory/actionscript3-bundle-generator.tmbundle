@@ -80,11 +80,13 @@ class AsdocClassParser
     # to the format used by the Function Completion TM command.
     def gen_method_completions(html,id)
         html.elements.each(x_path_method(id)) do |tag|
+
             completion = tag.to_s.gsub(/\s/,"")                 #Strip whitespace.
             completion = completion.gsub(/<\/?[^>]*>/,"")       #Strip html tags.
             completion = completion.sub(/\).*/,")")             #Strip return statement.
-                                                                #TODO: Snippetise.
-            if completion != ""
+			
+			#Only add completions with method params
+            if completion =~ /^\w+\(\s*(\w+|\.\.\.)/			
                 @method_completions.push(completion)
             end
         end        
@@ -212,6 +214,12 @@ class AsdocClassParser
 	def method_names
 		return if @method_names.empty?        
         @method_names.uniq.sort        
+	end
+	
+	# Returns a list of accumulated class names.
+	def class_names
+		return if @class_names.empty?        
+        @class_names.uniq.sort        
 	end
 	
 	# Returns a list of accumulated constant names.
