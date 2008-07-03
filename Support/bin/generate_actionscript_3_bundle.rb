@@ -12,8 +12,8 @@ require ENV['TM_BUNDLE_SUPPORT']+'/lib/list_to_regexp'
 FLASH_PATH = '/Library/Application Support/Adobe/Flash CS3/en/Configuration/HelpPanel/Help/ActionScriptLangRefV3/all-classes.html'
 FLEX_PATH = '/Applications/flex_sdk_3/docs/langref/all-classes.html' 
 
-if !File.exist?(FLASH_PATH) or !File.exist?(FLEX_PATH)
-    TextMate.exit_show_tool_tip( "Asdoc files were not found in their expected locations." )
+unless File.exist?(FLASH_PATH) and File.exist?(FLEX_PATH)
+    TextMate.exit_show_tool_tip( "AsDoc index 404." )
 end
 
 log = true;
@@ -71,9 +71,9 @@ dp = AsdocFrameworkParser.new
 dp.logging_enabled = log
 dp.load_framework FLEX_PATH
 
-# =====================
-# = Logging Utilities =
-# =====================
+# ===========
+# = Logging =
+# ===========
 
 log = false;
 
@@ -116,6 +116,9 @@ def pattern_for(name, list)
 end
 
 bundlePath = '/Users/simon/Library/Application Support/TextMate/Bundles/ActionScript 3.tmbundle'
+
+TextMate.exit_show_tool_tip( "AS3 Bundle 404." ) unless File.exist?(bundlePath)
+
 grammarPath = bundlePath+'/Syntaxes/ActionScript 3.tmLanguage'
 
 @grammar = OSX::PropertyList.load(File.read(grammarPath))
@@ -152,6 +155,10 @@ File.open(grammarPath, "w") do |file|
   file << @grammar.to_plist
 end
 
+# =========================
+# = AutoCompletion Outupt =
+# =========================
+
 all_completions = tc.method_completions + fc.method_completions + flc.method_completions + mc.method_completions
 all_completions = all_completions.uniq.sort
 
@@ -159,12 +166,19 @@ method_completions = File.open( bundlePath+"/Support/data/completions.txt",
                                 File::WRONLY|File::TRUNC|File::CREAT )
 method_completions.puts all_completions
 
-doc_extras = File.new( ENV['TM_BUNDLE_SUPPORT']+"/data/templates/additional_help.txt" )
+# ===================================
+# = Documentation Dictionary Output =
+# ===================================
+
+doc_extras = IO.readlines( ENV['TM_BUNDLE_SUPPORT']+"/data/templates/additional_help.txt" )
 doc_dictionary = File.new( bundlePath+"/Support/data/doc_dictionary.xml",
                            File::WRONLY|File::TRUNC|File::CREAT )
 
-doc_dictionary.puts dp.asdoc_dictionary
-# doc_dictionary.puts doc_extras.read
+doc_dictionary.puts '<?xml version="1.0" encoding="UTF-8"?>'
+doc_dictionary.puts "<dict>"
+doc_dictionary.puts dp.doc_path_list.sort
+doc_dictionary.print doc_extras
+doc_dictionary.puts "</dict>"
 
 # `osascript -e 'tell app "TextMate" to reload bundles'`
 
