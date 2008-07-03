@@ -12,8 +12,9 @@ require ENV['TM_BUNDLE_SUPPORT']+'/lib/list_to_regexp'
 FLASH_PATH = '/Library/Application Support/Adobe/Flash CS3/en/Configuration/HelpPanel/Help/ActionScriptLangRefV3/all-classes.html'
 FLEX_PATH = '/Applications/flex_sdk_3/docs/langref/all-classes.html' 
 
-# HTML_PATH = ENV['TM_SELECTED_FILE']
-# TextMate.exit_show_tool_tip( "Please Select a File to Parse" ) if HTML_PATH == nil
+if !File.exist?(FLASH_PATH) or !File.exist?(FLEX_PATH)
+    TextMate.exit_show_tool_tip( "Asdoc files were not found in their expected locations." )
+end
 
 # Top Level.
 
@@ -119,17 +120,17 @@ add_repository_collection("flash",fc)
 add_repository_collection("fl",flc)
 add_repository_collection("mx",mc)
 
-File.open(path+"/ActionScript 3.textmate", File::WRONLY|File::TRUNC|File::CREAT) do |file|
+File.open(grammarPath, "w") do |file|
   file << @grammar.to_plist
 end
 
 all_completions = tc.method_completions + fc.method_completions + flc.method_completions + mc.method_completions
 all_completions = all_completions.uniq.sort
 
-method_completions = File.open( path+"/as3_completions.txt", File::WRONLY|File::TRUNC|File::CREAT )
+method_completions = File.open( bundlePath+"/Support/data/as3_completions_2.txt", File::WRONLY|File::TRUNC|File::CREAT )
 method_completions.puts all_completions
 
-doc_dictionary = File.new( path+"/doc_dictionary.xml", File::WRONLY|File::TRUNC|File::CREAT )
+doc_dictionary = File.new( bundlePath+"Support/data/doc_dictionary.xml", File::WRONLY|File::TRUNC|File::CREAT )
 doc_dictionary.puts dp.asdoc_dictionary
 
-#`osascript -e'tell app "TextMate" to reload bundles'`
+`osascript -e'tell app "TextMate" to reload bundles'`
