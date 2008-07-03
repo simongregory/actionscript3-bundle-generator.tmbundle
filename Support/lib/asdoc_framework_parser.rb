@@ -29,6 +29,10 @@ class AsdocFrameworkParser
         @class_path_list
     end
 
+	def doc_path_list
+		@doc_path_list
+	end
+
 	def package_filter=(rg)
 		@package_filter = rg
 	end
