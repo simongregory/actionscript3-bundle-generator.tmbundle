@@ -153,7 +153,7 @@ class AsdocClassParser
         lang += "fileTypes = (as);"
         lang += "\tcomment = '#{@framework.capitalize} Framework.';\n"
         lang += "\tfoldingStartMarker = '\{\s*$';\n"
-    	lang += "\tfoldingStopMarker = '^\s*\}';\n"
+    	  lang += "\tfoldingStopMarker = '^\s*\}';\n"
         lang += "keyEquivalent = \"^~A\";"
         lang += "name = #{@framework.capitalize};\n"
         lang += "scopeName = 'source.actionscript.3.#{@framework}';\n"
@@ -237,7 +237,13 @@ class AsdocClassParser
 	# Log output.
 	def log( message )
 		if @logging_enabled
-			print message + "<br/>"
+
+			require 'syslog'
+
+      Syslog.open('as3-bundle-gen')
+      Syslog.crit(message)
+      Syslog.close()
+      
 		end
 	end
     

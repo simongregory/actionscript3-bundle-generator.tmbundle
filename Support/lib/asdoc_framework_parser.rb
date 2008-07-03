@@ -99,7 +99,11 @@ class AsdocFrameworkParser
 	# Log output.
 	def log( message )
 		if @logging_enabled
-			print message + "<br/>"
+			require 'syslog'
+
+      Syslog.open('as3-bundle-gen')
+      Syslog.crit(message)
+      Syslog.close()			
 		end
 	end
 
