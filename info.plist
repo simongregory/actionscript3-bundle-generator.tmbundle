@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>mainMenu</key>
@@ -16,9 +16,21 @@
 			<string>D3B3817C-1B5B-45F3-BA5F-9E9481BEA1FC</string>
 			<string>------------------------------------</string>
 			<string>24F15F89-6B68-44A5-A6E3-59DDC723FEF0</string>
+			<string>------------------------------------</string>
+			<string>C926862D-04EE-45C7-8B86-E89E9EBD9CAA</string>
 		</array>
 		<key>submenus</key>
-		<dict/>
+		<dict>
+			<key>C926862D-04EE-45C7-8B86-E89E9EBD9CAA</key>
+			<dict>
+				<key>items</key>
+				<array>
+					<string>45E4398F-8932-46E4-86AB-E5DF3CA71999</string>
+				</array>
+				<key>name</key>
+				<string>Experimental</string>
+			</dict>
+		</dict>
 	</dict>
 	<key>name</key>
 	<string>ActionScript 3 Bundle Generator</string>
@@ -28,8 +40,10 @@
 		<string>2073C5D0-4A9C-4F7A-A82B-DE0DF756A196</string>
 		<string>ECD06062-FC8A-413B-BD5D-82E5FAEFC1FE</string>
 		<string>2D787B1E-7516-4004-A0BA-0FE7335CEB6F</string>
+		<string>45E4398F-8932-46E4-86AB-E5DF3CA71999</string>
 		<string>A29ECF9D-36F1-4001-B458-4944C58A2FD2</string>
 		<string>D3B3817C-1B5B-45F3-BA5F-9E9481BEA1FC</string>
+		<string>7FF3151A-7B34-4537-9577-A0565AFBCECD</string>
 	</array>
 	<key>uuid</key>
 	<string>E585B311-17DE-4F1C-8A1F-A2991FF641C7</string>
