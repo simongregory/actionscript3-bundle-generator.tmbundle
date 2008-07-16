@@ -105,9 +105,9 @@ class AsdocFrameworkParser
 		if @logging_enabled
 			require 'syslog'
 
-      Syslog.open('as3-bundle-gen')
-      Syslog.crit(message)
-      Syslog.close()			
+      		Syslog.open('as3-bundle-gen')
+      		Syslog.crit(message)
+      		Syslog.close()			
 		end
 	end
 
