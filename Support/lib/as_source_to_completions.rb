@@ -22,47 +22,74 @@ class AsSourceToCompletions
 	def initialize
 		@class = /^\s*(((dynamic|final)\s+)?(public)\s+((dynamic|final)\s+)?(class).*(?m:[^{]+))/
 		@imports = /^\s*import\s*[\w.*]+;?/
-		@methods = /^\s*((override\s+)?(public|protected)\s+function\s+((get|set)\s+)?\b\w+\b\s*\(((?m:[^)]*))\)\s*:\s*(\w+))/		
+		@methods = /^\s*(((override|public|protected|static)\s+)?(public|protected|static)\s+function\s+((get|set)\s+)?\b\w+\b\s*\(((?m:[^)]*))\)\s*:\s*(\w+))/		
 		@internals = /(^\s*package\s+[\w.]+(?m:[^$].*))((^(internal\s+)?class\b))/
 		@interface = /^\s*public\s+(interface)\s+(\w+)\b/
 		@metadata = /^(\[\s*\b(Effect|Event|Style)\b.*\])\s*$/
 		@package = /^\s*(package\s+[\w.]+)(?m:[^{]+)/
+    @vars = /^\s*\b(public|protected|static)\b\s+\b(public|protected|static)\b\s+\b(var|const)\b\s+\b(\w+)\b\s*:\s*((\w+)|\*)/
 	end	
 	
 	public
 	
-	def parse(doc)
+	def process(uri)
 		
+		f = File.open(uri,"r" ).read.strip
+
+		doc = load_includes(f,uri)
+		doc	= parse(doc)
+		
+		p = package(doc,true)
+		i = imports(doc,true)
+		d = metadata(doc,true)
+		c = class_def(doc,true)
+		m = methods(doc,true)
+		v = variables(doc,true)
+		
+		result = p + " {" + i + "\n" + d + "\n" + c.chomp + " {\n" + v + m + "\n}}"
+		result.gsub!("\n\n", "")
+		
+		result
+		
+	end
+	
+	def parse(doc)
+
 		doc = strip_comments(doc)
 		
 		# Interfaces need not be processed
 		doc.scan(@interface)
 		return doc unless $1.nil?
 		
+		# Strips internal classes
 		doc.scan(@internals)
 		unless $1.nil?
 			doc = $1.sub( /\}((?m:[^}]+)\Z)/, "}\n")
 		end
-		
+				
 		doc
 		
 	end
 	
-	def imports(doc)
+	def imports(doc,pre_parsed=false)
+
+		unless pre_parsed
+			doc = parse(doc)
+			return if doc.nil?
+		end
 		
-		d = parse(doc)
-		return if d.nil?
-		
-		imps = d.scan(@imports)
-		d = imps.join("\n")
-		d
+		imps = doc.scan(@imports)
+		doc = imps.join("\n")
+		doc
 		
 	end
 	
-	def metadata(doc)
-		
-		doc = parse(doc)
-		return if doc.nil?
+	def metadata(doc,pre_parsed=false)
+
+		unless pre_parsed
+			doc = parse(doc)
+			return if doc.nil?
+		end
 		
 		m = []
 		doc.scan(@metadata) do |l,e|
@@ -74,10 +101,12 @@ class AsSourceToCompletions
 
 	end
 	
-	def class(doc)
+	def class_def(doc,pre_parsed=false)
 
-		doc = parse(doc)
-		return if doc.nil?
+		unless pre_parsed
+			doc = parse(doc)
+			return if doc.nil?
+		end
 		
 		m = []
 		doc.scan(@class) do |l|
@@ -89,10 +118,12 @@ class AsSourceToCompletions
 		
 	end
 	
-	def package(doc)
+	def package(doc,pre_parsed=false)
 
-		doc = parse(doc)
-		return if doc.nil?
+		unless pre_parsed
+			doc = parse(doc)
+			return if doc.nil?
+		end
 		
 		m = []
 		doc.scan(@package) do |l|
@@ -104,17 +135,41 @@ class AsSourceToCompletions
 		
 	end
 
-	def methods(doc)
-
-		doc = parse(doc)
-		return if doc.nil?
+	def methods(doc,pre_parsed=false)
+		
+		unless pre_parsed
+			doc = parse(doc)
+			return if doc.nil?
+		end
 		
 		m = []
 		doc.scan(@methods) do |l|
 			#m << $&.to_s
-			m << $1.gsub(/\n|\t/,'')
+			m << $1.gsub(/\s\s+|\n|\t/,'')
 		end
-			
+		
+		m.each_index { |i| m[i] = m[i]+"{}" }
+		
+		doc = m.join("\n")
+		doc
+		
+	end
+	
+	def variables(doc,pre_parsed=false)
+		
+		unless pre_parsed
+			doc = parse(doc)
+			return if doc.nil?
+		end
+		
+		m = []
+		doc.scan(@vars) do |l|
+			m << $&.to_s
+			#m << $1.gsub(/\s\s+|\n|\t/,'')
+		end
+		
+		#m.each_index { |i| m[i] = m[i]+"{}" }
+		
 		doc = m.join("\n")
 		doc
 		
@@ -141,13 +196,20 @@ class AsSourceToCompletions
 	
 	def load_includes(doc,uri)
 		
-		doc.each do |line|
-			if line =~ /^\s*include\s+"([\w.\/]+)";$/
+		doc_a = doc.split("\n")
+
+		doc_a.each_index do |i|
+			line = doc_a[i]
+			if line =~ /include\s+"([\w.\/]+)"/
 				include_path = File.dirname(uri)+"/#{$1}"
+				include_file = File.open(include_path,"r").read.strip				
+				doc_a[i] = include_file.to_s
 			end
 		end
 		
+		doc = doc_a.join("\n")
 		doc
+		
 	end
 	
 end
@@ -289,7 +351,7 @@ EOF
 
 			p = AsSourceToCompletions.new
 
-			assert_equal(cla, p.class(doc))
+			assert_equal(cla, p.class_def(doc))
 
 		end
 
@@ -326,7 +388,7 @@ EOF
 
 			p = AsSourceToCompletions.new
 
-			assert_equal(cla, p.class(doc))
+			assert_equal(cla, p.class_def(doc))
 
 		end
 
@@ -378,15 +440,18 @@ package org.foo.bar
 			
 		}
 		
+		public static function sayBar():Array{}
+		
 	}
 }
 			EOF
 			
 			result = <<-EOF
-public function set hello(value:String):void
-public function get hello():String
-public function sayFoo():String
-public function printBar(foo:String,bar:int,baz:*):void
+public function set hello(value:String):void{}
+public function get hello():String{}
+public function sayFoo():String{}
+public function printBar(foo:String,bar:int,baz:*):void{}
+public static function sayBar():Array{}
 EOF
 
 			p = AsSourceToCompletions.new

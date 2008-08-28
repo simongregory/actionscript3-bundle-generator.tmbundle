@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby -wKU
+
+require ENV['TM_SUPPORT_PATH']+'/lib/exit_codes'
+require ENV['TM_BUNDLE_SUPPORT']+'/lib/as_source_to_completions'
+
+CLASS_PATH = ENV['TM_SELECTED_FILE']
+
+TextMate.exit_show_tool_tip( "Please Select a File to Parse" ) if CLASS_PATH == nil
+
+cp = AsSourceToCompletions.new
+r = cp.process( CLASS_PATH )
+
+puts r</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>@R</string>
+	<key>name</key>
+	<string>Class to Completion</string>
+	<key>output</key>
+	<string>openAsNewDocument</string>
+	<key>scope</key>
+	<string>source.actionscript.3</string>
+	<key>uuid</key>
+	<string>9436A263-FA02-487F-97A5-0ADA443247EB</string>
+</dict>
+</plist>
