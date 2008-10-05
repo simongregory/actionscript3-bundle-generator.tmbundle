@@ -7,28 +7,28 @@
 	<key>command</key>
 	<string>#!/usr/bin/env ruby -wKU
 
-require ENV['TM_SUPPORT_PATH']+'/lib/exit_codes'
+require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview'
 require ENV['TM_BUNDLE_SUPPORT']+'/lib/as_source_to_completions'
 
-CLASS_PATH = ENV['TM_SELECTED_FILE']
+STDOUT.sync = true
 
-TextMate.exit_show_tool_tip( "Please Select a File to Parse" ) if CLASS_PATH == nil
+puts html_head( :title	=&gt; "ActionScript Source to Completions", :sub_title =&gt; "ActionScript 3" )
 
 cp = AsSourceToCompletions.new
-r = cp.process( CLASS_PATH )
+r = cp.process_project
 
-puts r</string>
+html_footer</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
 	<string>@R</string>
 	<key>name</key>
-	<string>Class to AutoCompletion File</string>
+	<string>Project to AutoCompletion Files</string>
 	<key>output</key>
-	<string>openAsNewDocument</string>
+	<string>showAsHTML</string>
 	<key>scope</key>
 	<string>source.actionscript.3</string>
 	<key>uuid</key>
-	<string>9436A263-FA02-487F-97A5-0ADA443247EB</string>
+	<string>EAC51BA2-40C1-4D95-B21A-10A0003D94AC</string>
 </dict>
 </plist>
