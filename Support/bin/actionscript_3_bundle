@@ -5,79 +5,62 @@ require ENV['TM_BUNDLE_SUPPORT']+'/lib/asdoc_class_parser'
 require ENV['TM_BUNDLE_SUPPORT']+'/lib/asdoc_framework_parser'
 require ENV['TM_BUNDLE_SUPPORT']+'/lib/list_to_regexp'
 
+# ==========================
+# = Environmental Settings =
+# ==========================
+
+BUNDLE_PATH = '/Users/simon/Library/Application Support/TextMate/Bundles/ActionScript 3.tmbundle'
+GRAMMAR_PATH = BUNDLE_PATH + '/Syntaxes/ActionScript 3.tmLanguage'
+
+FLASH_PATH = '/Library/Application Support/Adobe/Help/en_US/AS3LCR/Flash_10.0/all-classes.html'
+FLEX_PATH = '/Developer/SDKs/flex_sdk_4.0.0/asdoc-output/all-classes.html' 
+
+unless File.exist?(FLASH_PATH) and File.exist?(FLEX_PATH) and File.exist?(BUNDLE_PATH)
+    TextMate.exit_show_tool_tip "Failed to find required files."
+end
+
 # =================================
 # = Loading and Parsing of Asdocs =
 # =================================
 
-FLASH_PATH = '/Library/Application Support/Adobe/Flash CS3/en/Configuration/HelpPanel/Help/ActionScriptLangRefV3/all-classes.html'
-FLEX_PATH = '/Applications/flex_sdk_3/docs/langref/all-classes.html' 
+@log = true;
 
-unless File.exist?(FLASH_PATH) and File.exist?(FLEX_PATH)
-    TextMate.exit_show_tool_tip( "AsDoc index 404." )
+def create_cp(id,filter,path)
+  
+  fp = AsdocFrameworkParser.new
+  fp.logging_enabled = @log
+  fp.package_filter = filter
+  fp.load_framework path
+
+  cp = AsdocClassParser.new
+  cp.id = id
+  cp.logging_enabled = @log
+  cp.framework = fp.framework_name
+  cp.load_classes fp.class_path_list
+  
+  cp 
 end
 
-log = true;
+t  = create_cp('top-level', /^\.\//,FLASH_PATH)
+f  = create_cp('flash', /^flash/, FLASH_PATH)
+fl = create_cp('fl', /^fl\//, FLASH_PATH)
+fx = create_cp('flashx', /^flashx\//, FLEX_PATH)
+mx = create_cp('mx', /^mx\//, FLEX_PATH)
+sp = create_cp('spark', /^spark\//, FLEX_PATH)
+os = create_cp('osmf', /^org\/osmf/, FLEX_PATH)
 
-# Top Level.
-
-tp = AsdocFrameworkParser.new
-tp.logging_enabled = log
-tp.package_filter = /^\.\//
-tp.load_framework FLASH_PATH
-
-tc = AsdocClassParser.new
-tc.logging_enabled = log
-tc.framework = tp.framework_name
-tc.load_classes tp.class_path_list
-
-# flash packages.
-
-fp = AsdocFrameworkParser.new
-fp.logging_enabled = log
-fp.package_filter = /^flash\//
-fp.load_framework FLASH_PATH
-
-fc = AsdocClassParser.new
-fc.logging_enabled = log
-fc.framework = fp.framework_name
-fc.load_classes fp.class_path_list
-
-# fl packages.
-
-flp = AsdocFrameworkParser.new
-flp.logging_enabled = log
-flp.package_filter = /^fl\//
-flp.load_framework FLASH_PATH
-
-flc = AsdocClassParser.new
-flc.logging_enabled = log
-flc.framework = flp.framework_name
-flc.load_classes flp.class_path_list
-
-# mx packages.
-
-mp = AsdocFrameworkParser.new
-mp.logging_enabled = log
-mp.package_filter = /^mx\//
-mp.load_framework FLEX_PATH
-
-mc = AsdocClassParser.new
-mc.logging_enabled = log
-mc.framework = mp.framework_name
-mc.load_classes mp.class_path_list
+libs = [t,f,fl,fx,mx,sp,os]
 
 # collect docs info from flex docs.
 dp = AsdocFrameworkParser.new
-dp.logging_enabled = log
+dp.logging_enabled = @log
 dp.load_framework FLEX_PATH
 
 # ===========
 # = Logging =
 # ===========
 
-log = false;
-
-def print_to_file( path, content )
+def to_file(path, content)
 	if content		
 		File.open(path, File::WRONLY|File::TRUNC|File::CREAT) do |file|
 			file << content
@@ -85,23 +68,25 @@ def print_to_file( path, content )
 	end
 end
 
-if log
+if @log
 
-  path = '~/Desktop/as3_bundle_temp'
+  path = '/Users/simon/Desktop/as3_bundle_temp'
  
   unless File.exists?(path) 
   	Dir.mkdir(path)
   end
 
-  print_to_file( path+"/constant_names.txt", flc.constant_names.join("\n") )
-  print_to_file( path+"/method_names.txt", flc.method_names.join("\n") )
-  print_to_file( path+"/property_names.txt", flc.property_names.join("\n") )
+  to_file( path+"/constant_names.txt", f.constant_names.join("\n"))
+  to_file( path+"/method_names.txt",   f.method_names.join("\n") )
+  to_file( path+"/property_names.txt", f.property_names.join("\n"))
 
-  print_to_file( path+"/constant_names_comp.txt", ListToRegexp.process_list(flc.constant_names) )
-  print_to_file( path+"/method_names_comp.txt", ListToRegexp.process_list(flc.method_names) )
-  print_to_file( path+"/property_names_comp.txt", ListToRegexp.process_list(flc.property_names) )
+  to_file( path+"/constant_names_comp.txt", ListToRegexp.process_list(f.constant_names))
+  to_file( path+"/method_names_comp.txt",   ListToRegexp.process_list(f.method_names) )
+  to_file( path+"/property_names_comp.txt", ListToRegexp.process_list(f.property_names))
 
 end
+
+exit
 
 # =========================
 # = Grammar Load and Save =
@@ -115,43 +100,32 @@ def pattern_for(name, list)
   }
 end
 
-bundlePath = '/Users/simon/Library/Application Support/TextMate/Bundles/ActionScript 3.tmbundle'
+@grammar = OSX::PropertyList.load(File.read(GRAMMAR_PATH))
 
-TextMate.exit_show_tool_tip( "AS3 Bundle 404." ) unless File.exist?(bundlePath)
-
-grammarPath = bundlePath+'/Syntaxes/ActionScript 3.tmLanguage'
-
-@grammar = OSX::PropertyList.load(File.read(grammarPath))
-
-def add_framework(name,parser)
+def add_framework(parser)
 
 	patterns = []	
 
-	patterns << pattern_for( "support.constant.#{name}.actionscript.3", parser.constant_names )
-	patterns << pattern_for( "support.function.#{name}.actionscript.3", parser.method_names )
-	patterns << pattern_for( "support.property.#{name}.actionscript.3", parser.property_names )
+	patterns << pattern_for( "support.constant.#{parser.id}.actionscript.3", parser.constant_names )
+	patterns << pattern_for( "support.function.#{parser.id}.actionscript.3", parser.method_names )
+	patterns << pattern_for( "support.property.#{parser.id}.actionscript.3", parser.property_names )
 
-	@grammar['repository']['framework-'+name] = { 'patterns' => patterns }
+	@grammar['repository']['framework-'+parser.id] = { 'patterns' => patterns }
 	
 end
 
-def add_support_classes(name,parser)
+def add_support_classes(parser)
   patterns = []
-  patterns << pattern_for( "support.class.#{name}.actionscript.3", parser.class_names )
-  @grammar['repository']['support-classes-'+name] = { 'patterns' => patterns }
+  patterns << pattern_for( "support.class.#{parser.id}.actionscript.3", parser.class_names )
+  @grammar['repository']['support-classes-'+parser.id] = { 'patterns' => patterns }
 end
 
-add_support_classes("top-level",tc)
-add_support_classes("flash",fc)
-add_support_classes("fl",flc)
-add_support_classes("mx",mc)
+libs.each { |lib|
+  add_support_classes(lib)
+  add_framework(lib)
+}
 
-add_framework("top-level",tc)
-add_framework("flash",fc)
-add_framework("fl",flc)
-add_framework("mx",mc)
-
-File.open(grammarPath, "w") do |file|
+File.open(GRAMMAR_PATH, "w") do |file|
   file << @grammar.to_plist
 end
 
@@ -159,10 +133,11 @@ end
 # = AutoCompletion Outupt =
 # =========================
 
-all_completions = tc.method_completions + fc.method_completions + flc.method_completions + mc.method_completions
+all_completions = []
+libs.each { |lib| all_completions + lib.method_completions  }
 all_completions = all_completions.uniq.sort
 
-method_completions = File.open( bundlePath+"/Support/data/completions.txt", 
+method_completions = File.open( BUNDLE_PATH+"/Support/data/completions.txt", 
                                 File::WRONLY|File::TRUNC|File::CREAT )
 method_completions.puts all_completions
 
@@ -171,7 +146,7 @@ method_completions.puts all_completions
 # ===================================
 
 doc_extras = IO.readlines( ENV['TM_BUNDLE_SUPPORT']+"/data/templates/additional_help.txt" )
-doc_dictionary = File.new( bundlePath+"/Support/data/doc_dictionary.xml",
+doc_dictionary = File.new( BUNDLE_PATH+"/Support/data/doc_dictionary.xml",
                            File::WRONLY|File::TRUNC|File::CREAT )
 
 doc_dictionary.puts '<?xml version="1.0" encoding="UTF-8"?>'
