@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>generate_method_completions.rb</string>
+	<string>method_completions</string>
 	<key>input</key>
 	<string>none</string>
 	<key>name</key>
