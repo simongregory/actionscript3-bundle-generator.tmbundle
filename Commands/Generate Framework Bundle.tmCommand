@@ -8,8 +8,6 @@
 	<string>generate_framework_bundle.rb</string>
 	<key>input</key>
 	<string>none</string>
-	<key>keyEquivalent</key>
-	<string>@r</string>
 	<key>name</key>
 	<string>Create ActionScript Framework Bundle</string>
 	<key>output</key>

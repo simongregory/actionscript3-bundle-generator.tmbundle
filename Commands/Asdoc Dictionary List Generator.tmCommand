@@ -8,10 +8,8 @@
 	<string>generate_asdoc_dictionary.rb</string>
 	<key>input</key>
 	<string>none</string>
-	<key>keyEquivalent</key>
-	<string>@r</string>
 	<key>name</key>
-	<string>Generate ASDoc Dictionary</string>
+	<string>ASDoc Dictionary</string>
 	<key>output</key>
 	<string>openAsNewDocument</string>
 	<key>scope</key>

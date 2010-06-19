@@ -8,243 +8,243 @@ require ENV['TM_BUNDLE_SUPPORT'] + '/lib/list_to_regexp'
 # by the TextMate.
 class AsdocClassParser
 
-		CLASS							 = "Class"
-		CONSTANT					 = "Constant"
-		METHOD						 = "Method"
-		PROPERTY					 = "Property"
-		PROTECTED_METHOD	 = "ProtectedMethod"
-		PROTECTED_PROPERTY = "ProtectedProperty"
+  CLASS              = "Class"
+  CONSTANT           = "Constant"
+  METHOD             = "Method"
+  PROPERTY           = "Property"
+  PROTECTED_METHOD   = "ProtectedMethod"
+  PROTECTED_PROPERTY = "ProtectedProperty"
 
-		private
+  private
 
-		def initialize
+    def initialize
 
-				# The framework we are creating files for.
-				@framework = "actionscript-framework"
+      # The framework we are creating files for.
+      @framework = "actionscript-framework"
 
-				# Array to collect the class names of the documents we parse.
-				@class_names = []
+      # Array to collect the class names of the documents we parse.
+      @class_names = []
 
-				# Array in which we collect public and protected methods
-				# including their signatures.
-				@method_completions = []
+      # Array in which we collect public and protected methods
+      # including their signatures.
+      @method_completions = []
 
-				# Arrays to collect all of the names of class elements.
-				@method_names = []
-				@protected_method_names = []
-				@constant_names = []
-				@property_names = []
-				@protected_properties = []
+      # Arrays to collect all of the names of class elements.
+      @method_names = []
+      @protected_method_names = []
+      @constant_names = []
+      @property_names = []
+      @protected_properties = []
 
-		@logging_enabled = false
+      @logging_enabled = false
 
-		end
+    end
 
-		# Constructs and returns the xpath query for extracting
-		# class element names of the type specified in id.
-		def x_path(id)
+    # Constructs and returns the xpath query for extracting
+    # class element names of the type specified in id.
+    def x_path(id)
 
-				xpath_a = "html/body/div[@class='summarySection']/table[@id='summaryTable"
+      xpath_a = "html/body/div[@class='summarySection']/table[@id='summaryTable"
 
-				# Valid for properties and constants.
-				xpath_b = "']/tr/td[@class='summaryTableSignatureCol']/a[@class='signatureLink']"
+      # Valid for properties and constants.
+      xpath_b = "']/tr/td[@class='summaryTableSignatureCol']/a[@class='signatureLink']"
 
-				if id =~ /Method/
-						# Valid only for methods.
-						xpath_b = "']/tr/td[@class='summaryTableSignatureCol']/div/a[@class='signatureLink']"
-				end
+      if id =~ /Method/
+        # Valid only for methods.
+        xpath_b = "']/tr/td[@class='summaryTableSignatureCol']/div/a[@class='signatureLink']"
+      end
 
-				result = xpath_a + id + xpath_b
+      result = xpath_a + id + xpath_b
 
-		end
+    end
 
-		# Constructs and returns the xpath query for extracting
-		# method names and signatures of the type specified in id.
-		def x_path_method(id)
+    # Constructs and returns the xpath query for extracting
+    # method names and signatures of the type specified in id.
+    def x_path_method(id)
 
-				xpath_a = "html/body/div[@class='summarySection']/table[@id='summaryTable"
-				xpath_b = "']/tr/td[@class='summaryTableSignatureCol']/div[@class='summarySignature']"
-				result = xpath_a + id + xpath_b
+      xpath_a = "html/body/div[@class='summarySection']/table[@id='summaryTable"
+      xpath_b = "']/tr/td[@class='summaryTableSignatureCol']/div[@class='summarySignature']"
+      result = xpath_a + id + xpath_b
 
-		end
+    end
 
-		# Scans the html for all the class elements of id type and
-		# stores them in the specified array.
-		def add_as_element(html,id,arr)
-				html.elements.each(x_path(id)) do |tag|
-						arr.push( tag[0].to_s )
-				end
-		end
+    # Scans the html for all the class elements of id type and
+    # stores them in the specified array.
+    def add_as_element(html,id,arr)
+      html.elements.each(x_path(id)) do |tag|
+        arr.push( tag[0].to_s )
+      end
+    end
 
-		# Scans the html for all method completions and converts them
-		# to the format used by the Function Completion TM command.
-		def gen_method_completions(html,id)
-				html.elements.each(x_path_method(id)) do |tag|
+    # Scans the html for all method completions and converts them
+    # to the format used by the Function Completion TM command.
+    def gen_method_completions(html,id)
+      html.elements.each(x_path_method(id)) do |tag|
 
-						completion = tag.to_s.gsub(/\s/,"")									#Strip whitespace.
-						completion = completion.gsub(/<\/?[^>]*>/,"")				#Strip html tags.
-						completion = completion.sub(/\).*/,")")							#Strip return statement.
+        completion = tag.to_s.gsub(/\s/,"")            #Strip whitespace.
+        completion = completion.gsub(/<\/?[^>]*>/,"")  #Strip html tags.
+        completion = completion.sub(/\).*/,")")        #Strip return statement.
 
-						#Only add completions with method params
-						if completion =~ /^\w+\(\s*(\w+|\.\.\.)/
-								@method_completions.push(completion)
-						end
-				end
-		end
+        #Only add completions with method params
+        if completion =~ /^\w+\(\s*(\w+|\.\.\.)/
+          @method_completions.push(completion)
+        end
+      end
+    end
 
-		public
+  public
 
-		# Getter/Setters
+    # Getter/Setters
 
-		# The framework we are currenlty working with.
-		def framework=(fw)
-				@framework = fw
-		end
+    # The framework we are currenlty working with.
+    def framework=(fw)
+      @framework = fw
+    end
 
-	def logging_enabled=(boo)
-		@logging_enabled = boo
-	end
+    def logging_enabled=(boo)
+      @logging_enabled = boo
+    end
 
-		# Input Commands
+    # Input Commands
 
-		# Load All Framework Classes
-		def load_classes class_path_list
-				class_path_list.each do |path|
-						add_class path
-				end
-		end
+    # Load All Framework Classes
+    def load_classes class_path_list
+      class_path_list.each do |path|
+        add_class path
+      end
+    end
 
-		# Parses and stores the data found in the 'file_path'
-		# to our internal lists.
-		def add_class file_path
+    # Parses and stores the data found in the 'file_path'
+    # to our internal lists.
+    def add_class file_path
 
-				cleaned_html = AsdocTidy.clean_for_rexml(file_path)
-				class_html	 = REXML::Document.new cleaned_html
+      cleaned_html = AsdocTidy.clean_for_rexml(file_path)
+      class_html	 = REXML::Document.new cleaned_html
 
-				class_name = File.basename( file_path, ".html" )
-				log( "Adding #{class_name}.." )
+      class_name = File.basename( file_path, ".html" )
+      log( "Adding #{class_name}.." )
 
-				@class_names.push(class_name)
-				add_as_element(class_html,METHOD,@method_names)
-				add_as_element(class_html,PROTECTED_METHOD,@protected_method_names)
-				add_as_element(class_html,CONSTANT,@constant_names)
-				add_as_element(class_html,PROPERTY,@property_names)
-				add_as_element(class_html,PROTECTED_PROPERTY,@protected_properties)
+      @class_names.push(class_name)
+      add_as_element(class_html,METHOD,@method_names)
+      add_as_element(class_html,PROTECTED_METHOD,@protected_method_names)
+      add_as_element(class_html,CONSTANT,@constant_names)
+      add_as_element(class_html,PROPERTY,@property_names)
+      add_as_element(class_html,PROTECTED_PROPERTY,@protected_properties)
 
-				gen_method_completions(class_html,METHOD)
-				gen_method_completions(class_html,PROTECTED_METHOD)
+      gen_method_completions(class_html,METHOD)
+      gen_method_completions(class_html,PROTECTED_METHOD)
 
-		end
+    end
 
-		# Ouput Commands
+    # Ouput Commands
 
-		# Returns accumulated method completions.
-		def method_completions
+    # Returns accumulated method completions.
+    def method_completions
 
-				return if @method_completions.empty?
-				@method_completions.uniq.sort
+      return if @method_completions.empty?
+      @method_completions.uniq.sort
 
-		end
+    end
 
-		# Returns all collected data as a tmLanguage file (plist format).
-		def framework_language
+    # Returns all collected data as a tmLanguage file (plist format).
+    def framework_language
 
-				lang = "{"
-				lang += "fileTypes = (as);"
-				lang += "\tcomment = '#{@framework.capitalize} Framework.';\n"
-				lang += "\tfoldingStartMarker = '\{\s*$';\n"
-				lang += "\tfoldingStopMarker = '^\s*\}';\n"
-				lang += "keyEquivalent = \"^~A\";"
-				lang += "name = #{@framework.capitalize};\n"
-				lang += "scopeName = 'source.actionscript.3.#{@framework}';\n"
-				lang += "\tpatterns = (\n"
+      lang = "{"
+      lang += "fileTypes = (as);"
+      lang += "\tcomment = '#{@framework.capitalize} Framework.';\n"
+      lang += "\tfoldingStartMarker = '\{\s*$';\n"
+      lang += "\tfoldingStopMarker = '^\s*\}';\n"
+      lang += "keyEquivalent = \"^~A\";"
+      lang += "name = #{@framework.capitalize};\n"
+      lang += "scopeName = 'source.actionscript.3.#{@framework}';\n"
+      lang += "\tpatterns = (\n"
 
-				all_elements = { "support.class" => @class_names,
-												 "support.function" => @method_names,
-												 "support.function.protected" => @protected_method_names,
-												 "support.constant" => @constant_names,
-												 "support.property" => @property_names,
-												 "support.property.protected" => @protected_properties }
+      all_elements = { "support.class" => @class_names,
+                       "support.function" => @method_names,
+                       "support.function.protected" => @protected_method_names,
+                       "support.constant" => @constant_names,
+                       "support.property" => @property_names,
+                       "support.property.protected" => @protected_properties }
 
-				all_elements.each do |key, value|
+      all_elements.each do |key, value|
 
-						next if value.empty?
+        next if value.empty?
 
-						lang += "\t{\n"
-						lang += "\t\tname = '#{key}.#{@framework}';\n"
-						lang += "\t\tmatch = '\\b"
-						lang += ListToRegexp.process_list(value.sort.uniq)
-						lang += "\\b';\n"
-						lang += "\t},\n"
+        lang += "\t{\n"
+        lang += "\t\tname = '#{key}.#{@framework}';\n"
+        lang += "\t\tmatch = '\\b"
+        lang += ListToRegexp.process_list(value.sort.uniq)
+        lang += "\\b';\n"
+        lang += "\t},\n"
 
-				end
+      end
 
-				lang += ");\nuuid = '" + `uuidgen`.chomp + "'; }"
+      lang += ");\nuuid = '" + `uuidgen`.chomp + "'; }"
 
-		end
+    end
 
-		# Returns collected data as a completions list.
-		def auto_completions
+    # Returns collected data as a completions list.
+    def auto_completions
 
-				comps =	 "{ name = 'Completions';\n"
-				comps += "scope = 'source.actionscript.3';"
-				comps += "settings = "
-				comps += "{\n\tcomment = '#{@framework} completion list';"
-				comps += "\n\tcompletions = ("
+      comps =	 "{ name = 'Completions';\n"
+      comps += "scope = 'source.actionscript.3';"
+      comps += "settings = "
+      comps += "{\n\tcomment = '#{@framework} completion list';"
+      comps += "\n\tcompletions = ("
 
-				elements =	@class_names +
-										@method_names +
-										@protected_method_names +
-										@constant_names +
-										@property_names +
-										@protected_properties
+      elements =	@class_names +
+        @method_names +
+        @protected_method_names +
+        @constant_names +
+        @property_names +
+        @protected_properties
 
-				elements = elements.uniq.sort
+      elements = elements.uniq.sort
 
-				elements.each do | item |
-						comps += "'" + item + "'"
-						comps += "," if item != elements.last
-				end
+      elements.each do | item |
+        comps += "'" + item + "'"
+        comps += "," if item != elements.last
+      end
 
-				comps += ");\n};\nuuid = '" + `uuidgen`.chomp + "'; };\n}"
+      comps += ");\n};\nuuid = '" + `uuidgen`.chomp + "'; };\n}"
 
-		end
+    end
 
-	# Returns a list of accumulated method names.
-	def method_names
-		return if @method_names.empty?
-				@method_names.uniq.sort
-	end
+    # Returns a list of accumulated method names.
+    def method_names
+      return if @method_names.empty?
+      @method_names.uniq.sort
+    end
 
-	# Returns a list of accumulated class names.
-	def class_names
-		return if @class_names.empty?
-				@class_names.uniq.sort
-	end
+    # Returns a list of accumulated class names.
+    def class_names
+      return if @class_names.empty?
+      @class_names.uniq.sort
+    end
 
-	# Returns a list of accumulated constant names.
-	def constant_names
-		return if @constant_names.empty?
-				@constant_names.uniq.sort
-	end
+    # Returns a list of accumulated constant names.
+    def constant_names
+      return if @constant_names.empty?
+      @constant_names.uniq.sort
+    end
 
-	# Returns a list of accumulated constant names.
-	def property_names
-		return if @property_names.empty?
-				@property_names.uniq.sort
-	end
+    # Returns a list of accumulated constant names.
+    def property_names
+      return if @property_names.empty?
+      @property_names.uniq.sort
+    end
 
-	# Log output.
-	def log( message )
-		if @logging_enabled
+    # Log output.
+    def log( message )
+      if @logging_enabled
 
-			require 'syslog'
+        require 'syslog'
 
-			Syslog.open('as3-bundle-gen')
-			Syslog.crit(message)
-			Syslog.close()
+        Syslog.open('as3-bundle-gen')
+        Syslog.crit(message)
+        Syslog.close()
 
-		end
-	end
+      end
+    end
 
 end

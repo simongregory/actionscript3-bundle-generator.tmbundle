@@ -8,10 +8,8 @@
 	<string>generate_method_completions.rb</string>
 	<key>input</key>
 	<string>none</string>
-	<key>keyEquivalent</key>
-	<string>@r</string>
 	<key>name</key>
-	<string>Generate Method Completions</string>
+	<string>Method Completions</string>
 	<key>output</key>
 	<string>openAsNewDocument</string>
 	<key>scope</key>

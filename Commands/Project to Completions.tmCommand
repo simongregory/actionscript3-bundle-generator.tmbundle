@@ -20,8 +20,6 @@ r = cp.process_project
 html_footer</string>
 	<key>input</key>
 	<string>none</string>
-	<key>keyEquivalent</key>
-	<string>@R</string>
 	<key>name</key>
 	<string>Project to AutoCompletion Files</string>
 	<key>output</key>

@@ -16,12 +16,12 @@ module AsdocTidy
                              --show-body-only no \
                              --enclose-text yes \
                              --doctype strict \
-              		         --indent-attributes yes \
+                             --indent-attributes yes \
                              --tidy-mark no \
                              #{e_sh(file)}`
-                           
+
           end
-          
+
           # As clean() but additionally removes the namespace 
           # that's injected by tidy as REXML has a bug in it 
           # and our XPath expressions fail (Ruby 1.8.6)

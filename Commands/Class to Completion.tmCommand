@@ -20,8 +20,6 @@ r = cp.process( CLASS_PATH )
 puts r</string>
 	<key>input</key>
 	<string>none</string>
-	<key>keyEquivalent</key>
-	<string>@R</string>
 	<key>name</key>
 	<string>Class to AutoCompletion File</string>
 	<key>output</key>

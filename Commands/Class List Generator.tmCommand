@@ -11,10 +11,8 @@
 	<string>word</string>
 	<key>input</key>
 	<string>none</string>
-	<key>keyEquivalent</key>
-	<string>@r</string>
 	<key>name</key>
-	<string>Generate AutoCompletion List</string>
+	<string>AutoCompletion List</string>
 	<key>output</key>
 	<string>openAsNewDocument</string>
 	<key>scope</key>
