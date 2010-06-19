@@ -4,19 +4,22 @@ require 'fileutils'
 require ENV['TM_SUPPORT_PATH']+'/lib/textmate'
 
 # Class to convert all the files in the current TM project to files that can be
-# used by the the ActionScript 3 completion engine.
+# used by the the ActionScript 3 completion engine. Currently used to generate
+# the files in ActionScript 3.tmbundle/Support/data/completions/*
 #
-# This should essentially strip all comments and working code from the class
-# leaving the method signatures, public vars, and metadata etc in place.
+# This will strip all comments and working code from the class leaving the 
+# method signatures, public vars, and metadata etc in place.
 #
-# Logic flow.
-# 1. load class.
-# 2. load includes.
-# 3. strip comments.
-# 4. strip internal classes.
-# 5. strip any trailing imports.
-# 6. gather package, imports, metadata, class, properties and methods.
-# 7. format and output gathered file data.
+# Logic flow:
+#
+# 1. load class
+# 2. load includes
+# 3. strip comments
+# 4. strip internal classes
+# 5. strip any trailing imports
+# 6. gather package, imports, metadata, class, properties and methods
+# 7. format and output gathered file data
+#
 class AsSourceToCompletions
 
   private

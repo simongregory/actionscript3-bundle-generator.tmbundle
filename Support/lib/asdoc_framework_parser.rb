@@ -1,11 +1,14 @@
+#!/usr/bin/env ruby -wKU
+# encoding: utf-8
+
 require "rexml/document"
 require "#{ENV['TM_SUPPORT_PATH']}/lib/escape"
 require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/asdoc_tidy"
 
-# This class takes the asdoc generated all-classes.html file and
-# parses into object that can be outputted for use within TextMate's
-# Bundle system, and for further finer grained parsing (see the
-# AsdocClassParser)
+# Deserialises the asdoc generated all-classes.html file into a object that is
+# then serialized into a TextMate Bundle. Children are handled by the 
+# AsdocClassParser class.
+#
 class AsdocFrameworkParser
 
   LINK_X_PATH = "html/body/table/tr/td/a"
@@ -24,22 +27,11 @@ class AsdocFrameworkParser
   public
 
     # Getter/Setters
-
-    def class_path_list
-      @class_path_list
-    end
-
-    def doc_path_list
-      @doc_path_list
-    end
-
-    def package_filter=(rg)
-      @package_filter = rg
-    end
-
-    def logging_enabled=(boo)
-      @logging_enabled = boo
-    end
+    attr_reader :class_path_list
+    attr_reader :doc_path_list
+    
+    attr_writer :package_filter
+    attr_writer :logging_enabled
 
     # Commands
 
