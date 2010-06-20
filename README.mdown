@@ -51,9 +51,9 @@ For Bundle conventions please follow the TextMate [conventions][tm_conventions].
 # Support
 
  * [Issue tracker][issue_tracker]
- * [Repository][repo]
+ * [Repository][repo_master]
 
-Or you can try dropping me an email via github.
+Or you can try dropping [me][sg_gh] an email via [github][sg_gh].
 
 # Maintainer
 
@@ -92,6 +92,7 @@ An exception is made for files in readable text which contain their own license 
 [as3_bundle_repo]: http://github.com/simongregory/actionscript3.tmbundle/
 [repo_master]: http://github.com/simongregory/actionscript3-bundle-generator.tmbundle/tree/master
 [sg_blog]: http://blog.simonregory.com
+[sg_gh]: http://github.com/simonregory
 [tm_conventions]: http://svn.textmate.org/trunk/Conventions.txt
 [tm_env_vars]: http://manual.macromates.com/en/environment_variables
 [tm_mailing_list]: http://lists.macromates.com/listinfo/textmate
