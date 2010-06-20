@@ -5,15 +5,21 @@ require ENV['TM_BUNDLE_SUPPORT']+'/lib/asdoc_class_parser'
 require ENV['TM_BUNDLE_SUPPORT']+'/lib/asdoc_framework_parser'
 require ENV['TM_BUNDLE_SUPPORT']+'/lib/list_to_regexp'
 
-# ==========================
-# = Environmental Settings =
-# ==========================
+# ============
+# = Settings =
+# ============
 
-BUNDLE_PATH = '/Users/simon/Library/Application Support/TextMate/Bundles/ActionScript 3.tmbundle'
+@log = false;
+
+user = ENV['USER'] || 'simon'
+
+BUNDLE_PATH = "/Users/#{user}/Library/Application Support/TextMate/Bundles/ActionScript 3.tmbundle"
 GRAMMAR_PATH = BUNDLE_PATH + '/Syntaxes/ActionScript 3.tmLanguage'
 
 FLASH_PATH = '/Library/Application Support/Adobe/Help/en_US/AS3LCR/Flash_10.0/all-classes.html'
-FLEX_PATH = '/Developer/SDKs/flex_sdk_4.0.0/asdoc-output/all-classes.html' 
+FLEX_PATH = '/Developer/SDKs/flex_sdk_4.0.0/asdoc-output/all-classes.html'
+
+TEMP_OUTPUT = "/Users/#{user}/Desktop/as3_bundle_generator_temp"
 
 unless File.exist?(FLASH_PATH) and File.exist?(FLEX_PATH) and File.exist?(BUNDLE_PATH)
     TextMate.exit_show_tool_tip "Failed to find required files."
@@ -22,8 +28,6 @@ end
 # =================================
 # = Loading and Parsing of Asdocs =
 # =================================
-
-@log = true;
 
 def create_cp(id,filter,path)
   
@@ -70,7 +74,7 @@ end
 
 if @log
 
-  path = '/Users/simon/Desktop/as3_bundle_temp'
+  path = TEMP_OUTPUT
  
   unless File.exists?(path) 
   	Dir.mkdir(path)

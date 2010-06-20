@@ -5,16 +5,21 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>as3_framework</string>
+	<string>. "$TM_SUPPORT_PATH/lib/webpreview.sh"
+html_header "ActionScript 3 Generator Bundle Help"
+
+"$TM_SUPPORT_PATH/lib/markdown_to_help.rb" &lt; "$TM_BUNDLE_PATH/README.mdown"
+
+html_footer</string>
 	<key>input</key>
 	<string>none</string>
 	<key>name</key>
-	<string>New Bundle</string>
+	<string>Help</string>
 	<key>output</key>
-	<string>showAsTooltip</string>
+	<string>showAsHTML</string>
 	<key>scope</key>
 	<string>text.html</string>
 	<key>uuid</key>
-	<string>2073C5D0-4A9C-4F7A-A82B-DE0DF756A196</string>
+	<string>1DD6D591-25E2-4B17-9B76-712ED8A64E8E</string>
 </dict>
 </plist>

@@ -15,7 +15,8 @@
 			<string>------------------------------------</string>
 			<string>9436A263-FA02-487F-97A5-0ADA443247EB</string>
 			<string>EAC51BA2-40C1-4D95-B21A-10A0003D94AC</string>
-			<string>45E4398F-8932-46E4-86AB-E5DF3CA71999</string>
+			<string>------------------------------------</string>
+			<string>1DD6D591-25E2-4B17-9B76-712ED8A64E8E</string>
 		</array>
 		<key>submenus</key>
 		<dict>
@@ -37,15 +38,16 @@
 	<string>ActionScript 3 Bundle Generator</string>
 	<key>ordering</key>
 	<array>
+		<string>ECD06062-FC8A-413B-BD5D-82E5FAEFC1FE</string>
 		<string>24F15F89-6B68-44A5-A6E3-59DDC723FEF0</string>
 		<string>2073C5D0-4A9C-4F7A-A82B-DE0DF756A196</string>
-		<string>ECD06062-FC8A-413B-BD5D-82E5FAEFC1FE</string>
 		<string>2D787B1E-7516-4004-A0BA-0FE7335CEB6F</string>
 		<string>A29ECF9D-36F1-4001-B458-4944C58A2FD2</string>
 		<string>D3B3817C-1B5B-45F3-BA5F-9E9481BEA1FC</string>
 		<string>7FF3151A-7B34-4537-9577-A0565AFBCECD</string>
 		<string>9436A263-FA02-487F-97A5-0ADA443247EB</string>
 		<string>EAC51BA2-40C1-4D95-B21A-10A0003D94AC</string>
+		<string>1DD6D591-25E2-4B17-9B76-712ED8A64E8E</string>
 	</array>
 	<key>uuid</key>
 	<string>E585B311-17DE-4F1C-8A1F-A2991FF641C7</string>
